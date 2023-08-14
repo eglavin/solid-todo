@@ -1,19 +1,11 @@
 import { Component, createSignal } from "solid-js";
 
 export const App: Component = () => {
-  let inputRef: HTMLInputElement | undefined = undefined;
   const [todoList, setTodoList] = createSignal<string[]>([
     "Apple",
     "Orange",
     "Banana",
   ]);
-
-  function addTodo() {
-    if (inputRef?.value) {
-      setTodoList((prev) => prev.concat(inputRef!.value));
-      inputRef.value = "";
-    }
-  }
 
   return (
     <div class="flex flex-col px-4 text-gray-900">
@@ -50,31 +42,40 @@ export const App: Component = () => {
       </div>
 
       <div class="my-2">
-        <label for="todo-input" class="font-medium">
-          Todo Input
-        </label>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
 
-        <div class="flex items-center gap-4 mt-2">
-          <input
-            class="rounded-md border-0 py-2 px-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500"
-            id="todo-input"
-            name="todo-input"
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                addTodo();
-              }
-            }}
-            ref={inputRef}
-            type="text"
-          />
+            const input = event.currentTarget.elements.namedItem(
+              "todo-input"
+            ) as HTMLInputElement;
 
-          <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-            onClick={addTodo}
-          >
-            + Add Todo
-          </button>
-        </div>
+            if (input?.value) {
+              setTodoList((prev) => prev.concat(input.value));
+              input.value = "";
+            }
+          }}
+        >
+          <label for="todo-input" class="font-medium">
+            Todo Input
+          </label>
+
+          <div class="flex items-center gap-4 mt-2">
+            <input
+              class="rounded-md border-0 py-2 px-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              id="todo-input"
+              name="todo-input"
+              type="text"
+            />
+
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
+              type="submit"
+            >
+              + Add Todo
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
